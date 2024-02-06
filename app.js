@@ -1,7 +1,66 @@
 let items = document.querySelectorAll('.slider .list .item');
 let next = document.getElementById('next');
 let prev = document.getElementById('prev');
+let slider = document.getElementById('slider');
 let thumbnails = document.querySelectorAll('.thumbnail .item');
+let showLink = document.querySelector('.menu li:nth-child(3) a');
+let LoginBox = document.querySelector('.login-box');
+let crossBtn = document.querySelector('.cross-btn');
+let loginForm = document.getElementById("login-form");
+
+loginForm.onsubmit = async function(event){
+    event.preventDefault();
+    var email = document.getElementById('email').value;
+    var password = document.getElementById('password').value;
+    var formData = {
+        email: email,
+        password: password
+    };
+
+    await fetch('http://localhost:8000/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            
+            throw new Error('Server is not responding');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log(data);
+        var successMessage = document.createElement('div');
+        successMessage.classList.add('success-message');
+        successMessage.textContent = 'Login Successfully';
+        document.body.appendChild(successMessage);
+
+        setTimeout(function() {
+            successMessage.remove();
+        }, 2000);
+
+        LoginBox.classList.remove('show');
+     slider.classList.remove('blur-background');
+    })
+    .catch(error => {
+        alert("server is not responding");
+        console.error('There was a problem with the login:', error);
+    });
+}
+
+showLink.onclick = function(event){
+    event.preventDefault();
+     LoginBox.classList.toggle('show');
+     slider.classList.toggle('blur-background');
+}
+crossBtn.onclick = function(event){
+    event.preventDefault();
+     LoginBox.classList.remove('show');
+     slider.classList.remove('blur-background');
+}
 
 // config param
 let countItem = items.length;
